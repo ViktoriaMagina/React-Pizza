@@ -1,23 +1,35 @@
 import React from 'react';
+import type { RootState } from '../../redux/store'
+import { useSelector, useDispatch } from 'react-redux'
+import { changeType, pizzasListTypes} from '../../redux/slices/filterSlice'
 
-interface Sort{
-  pizzasType:number;
-  setPizzasType: React.Dispatch<React.SetStateAction<number>>;
-}
 
-const Sort = ({pizzasType, setPizzasType}:Sort) => {
-  let sortArray: string[] = ["популярности", "цене", "алфавиту"]
-  
+const Sort = () => {
+  const pizzasSortType = useSelector((state: RootState) => state.filter.pizzasSortType)
+  const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false);
-  
+  const sortRef = React.useRef(null)
 
-  const selectSort = (index:number) =>{
-    setPizzasType(index)
+  const selectSort = (sort:{
+    name: string,
+    sortProperty: string,
+  }) =>{
+    dispatch(changeType(sort))
     setOpen(prev => prev!)
   }
-
+  React.useEffect(() => {
+    const handleClickOutside = (e:any) => {
+      if(!e.path.includes(sortRef.current)){
+        setOpen(false)
+      }
+    }
+    document.body.addEventListener("click", handleClickOutside)
+    return ()=> {
+      document.body.removeEventListener("click", handleClickOutside)
+    }
+  }, [])
   return (
-    <div onClick={() => setOpen((prev) => !prev)} className="sort">
+    <div ref={sortRef} onClick={() => setOpen((prev) => !prev)} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -31,15 +43,15 @@ const Sort = ({pizzasType, setPizzasType}:Sort) => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span>{sortArray[pizzasType]}</span>
+        <span>{pizzasSortType.name}</span>
       </div>
       {open && (
         <div className="sort__popup">
           <ul>
             {
-              sortArray.map((sort,i) => {
+              pizzasListTypes.map((sort,i) => {
                 return(
-                  <li key={i} onClick={() => selectSort(i)} className={i === pizzasType? "active" : ""}>{sort}</li>
+                  <li key={i} onClick={() => selectSort(sort)} className={pizzasListTypes[i].name === pizzasSortType.name? "active" : ""}>{sort.name}</li>
                 )
               })
             }

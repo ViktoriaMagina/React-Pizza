@@ -1,21 +1,23 @@
 import React from "react"
+import type { RootState } from '../../redux/store'
+import { useSelector, useDispatch } from 'react-redux'
+import { changeCategory, pizzasListCategories ,changePage} from '../../redux/slices/filterSlice'
+import { useWhyDidYouUpdate } from 'ahooks';
 
-
-
-interface Categories{
-  pizzasCategory: number, 
-  setPizzasCategory: React.Dispatch<React.SetStateAction<number>>;
-}
-
-const Categories = ({pizzasCategory ,setPizzasCategory}: Categories) => {
-  let categoriesArray:string [] = ["Все" , "Мясные", "Вегетарианская", "Гриль", "Острые", "Закрытые"]
-  
+const Categories = () => {
+  const pizzasCategory = useSelector((state: RootState) => state.filter.pizzasCategory)
+  const dispatch = useDispatch()
+  // useWhyDidYouUpdate("Categories")
+  const pizzasCategoryHandler = (i: number) => {
+    dispatch(changeCategory(i))
+    dispatch(changePage(0))
+  }
     return(
         <div className="categories">
         <ul>
-          {categoriesArray.map((category,i) => {
+          {pizzasListCategories.map((category,i) => {
             return(
-              <li onClick={()=> setPizzasCategory(i)} key={i} className={i === pizzasCategory ? "active" : ""}>{category}</li>
+              <li onClick={()=> pizzasCategoryHandler(i)} key={i} className={i === pizzasCategory.value ? "active" : ""}>{category}</li>
             )
           })}
           
