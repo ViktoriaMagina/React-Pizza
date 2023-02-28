@@ -14,7 +14,7 @@ import Home from './pages/Home';
 
 const router = createBrowserRouter([
   {
-    path: '/React-Pizza',
+    path: '/',
     element: <App />,
     errorElement: <NotFound />,
     children: [
@@ -23,11 +23,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/cart',
+        path: 'cart',
         element: <Cart />,
       },
       {
-        path: '/pizza/:id',
+        path: 'pizza/:id',
         element: <FullPizza />,
       }
     ],
